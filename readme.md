@@ -13,6 +13,12 @@ License
 In order to facilitate a wide range of usage, the (MIT License)[http://www.opensource.org/licenses/MIT] was adopted for
 this library.
 
+Usage
+-----
+
+I have an example index.php on gist. This assumes you have the repo cloned in include/ relative to the this index file.
+[index.php](https://gist.github.com/1175098)
+
 Supported Codes
 ---------------
 
