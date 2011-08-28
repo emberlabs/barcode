@@ -30,7 +30,7 @@ class Code128 extends BarcodeBase
 	 * Sub Type encoding
 	 * @var int (should be a class constant)
 	 */
-	private $subType = self::TYPE_AUTO;
+	private $type = self::TYPE_AUTO;
 
 	/*
 	 * This map maps the bar code to the common index. We use the built-in 
@@ -150,39 +150,49 @@ class Code128 extends BarcodeBase
 	 */
 	public function setSubType($type)
 	{
-		$this->subType = ($type < 0 || $type > 4) ? self::TYPE_AUTO : (int) $type;
+		$this->type = ($type < 1 || $type > 3) ? self::TYPE_AUTO : (int) $type;
+	}
+
+	/*
+	 * Get they key (value of the character)
+	 * @return int - pattern
+	 */
+	private function getKey($char)
+	{
+		switch ($this->type)
+		{
+			case self::TYPE_A:
+				return array_search($char, self::$mapA);
+			break;
+
+			case self::TYPE_B:
+				return array_search($char, self::$mapB);			
+			break;
+
+			case self::TYPE_C:
+				$charInt = (int) $char;
+				if ($charInt <= 99 && $charInt >= 0)
+				{
+					return $charInt;
+				}
+
+				return array_search($char, self::$mapC);
+			break;
+	
+			default:
+				$this->resolveSubtype();
+				return $this->getKey($char); // recursion!
+			break;
+		}
 	}
 
 	/*
 	 * Get the bar
 	 * @return int - pattern
 	 */
-	public function getBar($char)
+	private function getBar($char)
 	{
-		switch ($this->type)
-		{
-			case self::TYPE_A:
-				$key = array_search($char, self::$mapA);
-			break;
-
-			case self::TYPE_B:
-				$key = array_search($char, self::$mapB);			
-			break;
-
-			case self::TYPE_C:
-				if (is_int($char) && $char <= 99 && $char >= 0)
-				{
-					return self::$barMap[$char];
-				}
-
-				$key = array_search($char, self::$mapC);
-			break;
-	
-			default:
-				$this->resolveSubtype();
-				return $this->getBar($char); // recursion!
-			break;
-		}
+		$key = $this->getKey($char);
 
 		return self::$barMap[($key !== false) ? $key : 0];
 	}
@@ -215,6 +225,22 @@ class Code128 extends BarcodeBase
 	}
 
 	/*
+	 * Get the name of a start char fr te current subtype
+	 * @return string
+	 */
+	private function getStartChar()
+	{
+		$this->resolveSubtype();
+
+		switch($this->type)
+		{
+			case self::TYPE_A: return 'START_A'; break;
+			case self::TYPE_B: return 'START_B'; break;
+			case self::TYPE_C: return 'START_C'; break;
+		}
+	}
+
+	/*
 	 * Draw the image
 	 *
 	 * @return void
@@ -222,5 +248,75 @@ class Code128 extends BarcodeBase
 	public function draw()
 	{
 		$this->resolveSubtype();
+		$charAry = str_split($this->data);
+
+		// Calc scaling
+		// Bars is in refrence to a single, 1-level bar
+		$numBarsRequired = (sizeof($charAry) * 11) + 35; // 11 - Start Char, 11 - Stop char, 13 - valid char
+		$pxPerBar = (int) ($this->x / $numBarsRequired);
+		$currentX = 0;//($numBarsRequired  * $pxPerBar) / 2;
+
+		if ($pxPerBar < 1)
+		{
+			throw new LogicException("Not enough space on this barcode for this message, increase the width of the barcode");
+		}
+
+		if ($this->type == self::TYPE_C)
+		{
+			if (sizeof($charAry) % 2)
+			{
+				array_unshift($charAry, '0');
+			}
+
+			$pairs = '';
+			$newAry = array();
+			foreach($charAry as $k => $char)
+			{
+				if (($k % 2) == 0 && $k != 0)
+				{
+					$newAry[] = (int) $pairs;
+					$pairs = '';
+				}
+
+				$pairs .= $char;
+			}
+
+			$charAry = &$newAy;
+		}
+
+		// Add the start
+		array_unshift($charAry, $this->getStartChar());
+
+		// Checksum collector
+		$checkSumCollector = self::$mapA[$this->getStartChar()];
+
+		$this->img = @imagecreate($this->x, $this->y);
+		$white = imagecolorallocate($this->img, 255, 255, 255);
+		$black = imagecolorallocate($this->img, 0, 0, 0);
+
+		// Print the code
+		foreach($charAry as $k => $char)
+		{
+			$code = $this->getBar($char);
+			$checkSumCollector += $this->getKey($char) * $k; // $k will be 0 for our first
+
+			foreach(str_split((string) $code) as $bit)
+			{
+				imagefilledrectangle($this->img, $currentX, 0, ($currentX + $pxPerBar), ($this->y - 1), (($bit == '1') ? $black : $white));
+				$currentX += $pxPerBar;
+			}
+		}
+
+		$ending[] = self::$barMap[$checkSumCollector % 103];
+		$ending[] = self::$barMap[106]; // STOP.
+
+		foreach($ending as $code)
+		{
+			foreach(str_split((string) $code) as $bit)
+			{
+				imagefilledrectangle($this->img, $currentX, 0, ($currentX + $pxPerBar), ($this->y - 1), (($bit == '1') ? $black : $white));
+				$currentX += $pxPerBar;
+			}
+		}
 	}
 }

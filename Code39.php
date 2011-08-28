@@ -161,13 +161,13 @@ class Code39 extends BarcodeBase
 				// Narrow bar
 				if ($bit == '0')
 				{
-					ImageFilledRectangle ($this->img, $currentBarX, 0, ($currentBarX + $narrowBar), ($this->y - 1), $color);
+					imagefilledrectangle($this->img, $currentBarX, 0, ($currentBarX + $narrowBar), ($this->y - 1), $color);
 					$currentBarX += $narrowBar;
 				}
 				// Wide Bar
 				else if($bit == '1')
 				{
-					ImageFilledRectangle ($this->img, $currentBarX, 0, ($currentBarX + $wideBar), ($this->y - 1), $color);
+					imagefilledrectangle($this->img, $currentBarX, 0, ($currentBarX + $wideBar), ($this->y - 1), $color);
 					$currentBarX += $wideBar;
 				}
 
@@ -181,7 +181,7 @@ class Code39 extends BarcodeBase
 			}
 
 			// Draw spacer
-			ImageFilledRectangle ($this->img, $currentBarX, 0, ($currentBarX + $quietBar), ($this->y - 1), $white);
+			imagefilledrectangle($this->img, $currentBarX, 0, ($currentBarX + $quietBar), ($this->y - 1), $white);
 			$currentBarX += $quietBar;
 		}
 	}
