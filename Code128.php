@@ -300,14 +300,12 @@ class Code128 extends BarcodeBase
 			$code = $this->getBar($char);
 			$checkSumCollector += $this->getKey($char) * $k; // $k will be 0 for our first
 
-			echo "Collector: Weight(" . $k . ") X Value(" . $this->getKey($char) . ") = Sum(" . $this->getKey($char) * $k . "); Total at this point: $checkSumCollector<br />";
 			foreach(str_split((string) $code) as $bit)
 			{
 				imagefilledrectangle($this->img, $currentX, 0, ($currentX + $pxPerBar), ($this->y - 1), (($bit == '1') ? $black : $white));
 				$currentX += $pxPerBar;
 			}
 		}
-		echo "Sum: $checkSumCollector<br />";
 
 		$ending[] = self::$barMap[$checkSumCollector % 103];
 		$ending[] = self::$barMap[106]; // STOP.
