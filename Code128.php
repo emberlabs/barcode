@@ -171,7 +171,7 @@ class Code128 extends BarcodeBase
 
 			case self::TYPE_C:
 				$charInt = (int) $char;
-				if ($charInt <= 99 && $charInt >= 0)
+				if (strlen($char) == 2 && $charInt <= 99 && $charInt >= 0)
 				{
 					return $charInt;
 				}
@@ -209,7 +209,6 @@ class Code128 extends BarcodeBase
 			// If it is purely numeric, this is easy
 			if (is_numeric($this->data))
 			{
-				$this->data = (int) $this->data;
 				$this->type = self::TYPE_C;
 			}
 			// Are there only capitals and are there odd chars?
@@ -252,9 +251,9 @@ class Code128 extends BarcodeBase
 
 		// Calc scaling
 		// Bars is in refrence to a single, 1-level bar
-		$numBarsRequired = (sizeof($charAry) * 11) + 35; // 11 - Start Char, 11 - Stop char, 13 - valid char
+		$numBarsRequired = ($this->type != self::TYPE_C) ? (sizeof($charAry) * 11) + 35 : ((sizeof($charAry)/2) * 11) + 35;
 		$pxPerBar = (int) ($this->x / $numBarsRequired);
-		$currentX = 0;//($numBarsRequired  * $pxPerBar) / 2;
+		$currentX = ($this->x - ($numBarsRequired  * $pxPerBar)) / 2;
 
 		if ($pxPerBar < 1)
 		{
@@ -274,19 +273,20 @@ class Code128 extends BarcodeBase
 			{
 				if (($k % 2) == 0 && $k != 0)
 				{
-					$newAry[] = (int) $pairs;
+					$newAry[] = $pairs;
 					$pairs = '';
 				}
 
 				$pairs .= $char;
 			}
 
-			$charAry = &$newAy;
+			$newAry[] = $pairs;
+			$charAry = $newAry;
 		}
 
 		// Add the start
 		array_unshift($charAry, $this->getStartChar());
-
+var_dump($charAry);
 		// Checksum collector
 		$checkSumCollector = $this->getKey($this->getStartChar());
 
