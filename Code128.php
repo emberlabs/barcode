@@ -211,7 +211,7 @@ class Code128 extends BarcodeBase
 			{
 				$this->type = self::TYPE_C;
 			}
-			// Are there only capitals and are there odd chars?
+			// Are there only capitals?
 			else if(strtoupper($this->data) == $this->data)
 			{
 				$this->type = self::TYPE_A;

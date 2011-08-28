@@ -25,10 +25,10 @@ Supported Codes
 Some are planned, others are complete. 
 
 * Code39 **DONE**
-* Code128 *In Progress*
-* PDF417 *In Progress*
-* DataMatrix *In Progress*
+* Code128 **DONE**
 * QRCode *In Progress*
+* DataMatrix *Not Started*
+* PDF417 *Not Started*
 
 Contribute
 ----------
