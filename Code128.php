@@ -286,7 +286,7 @@ class Code128 extends BarcodeBase
 
 		// Add the start
 		array_unshift($charAry, $this->getStartChar());
-var_dump($charAry);
+
 		// Checksum collector
 		$checkSumCollector = $this->getKey($this->getStartChar());
 
