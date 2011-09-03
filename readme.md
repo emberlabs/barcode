@@ -28,7 +28,8 @@ Some are planned, others are complete.
 * Code128 **DONE**
 * QRCode *In Progress*
 * DataMatrix *Not Started*
-* PDF417 *Not Started*
+* UPC *Not Started*
+* PDF417 *Discontinued*
 
 Contribute
 ----------
