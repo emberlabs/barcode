@@ -289,12 +289,18 @@ class Code128 extends BarcodeBase
 
 		// Checksum collector
 		$checkSumCollector = $this->getKey($this->getStartChar());
-
-		$this->img = @imagecreate($this->x, $this->y);
+		
+		// human readable text requires additional height added in order to see the text
+		$extraHeight = ($this->humanText)?$this->fontSize+10:0;
+		$this->img = @imagecreate($this->x, $this->y + $extraHeight);
 		$white = imagecolorallocate($this->img, 255, 255, 255);
 		$black = imagecolorallocate($this->img, 0, 0, 0);
 
 		// Print the code
+		$FontHeight = ImageFontHeight ($this->fontSize);
+		$FontWidth = ImageFontWidth ($this->fontSize);
+		$BarcodeFull = strtoupper ($this->data);
+		$CenterLoc = (int)(($this->x-1) / 2) - (int)(($FontWidth * strlen($BarcodeFull)) / 2);
 		foreach($charAry as $k => $char)
 		{
 			$code = $this->getBar($char);
@@ -318,5 +324,11 @@ class Code128 extends BarcodeBase
 				$currentX += $pxPerBar;
 			}
 		}
+		
+		if($this->humanText){
+		    ImageString ($this->img, $this->fontSize, $CenterLoc, $this->y, $BarcodeFull, $black);
+		}
+		
+		return $this;
 	}
 }

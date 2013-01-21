@@ -48,6 +48,12 @@ abstract class BarcodeBase
 	 * @var int
 	 */
 	protected $jpgQuality = 85;
+	
+	/*
+	 * fontSize
+	 * @var int
+	 */
+	protected $fontSize = 5;
 
 	/*
 	 * (Abstract) Set the data
@@ -102,6 +108,18 @@ abstract class BarcodeBase
 		$this->humanText = (boolean) $enable;
 
 		return $this;
+	}
+	
+	/**
+	 * sets the font size for the human readable text below the barcode
+	 *
+	 * @param int $fontSize
+	 * @return \emberlabs\Barcode\BarcodeBase
+	 */
+	public function setFontSize($fontSize)
+	{
+	    $this->fontSize = $fontSize;
+	    return $this;
 	}
 
 	/*
@@ -161,6 +179,11 @@ abstract class BarcodeBase
 				throw new \RuntimeException("Could not determine file type.");
 			break;
 		}
+	}
+	
+	public function display($output = "jpg"){
+	    $this->draw();
+	    $this->output($output);
 	}
 
 	/*
