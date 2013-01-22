@@ -30,7 +30,7 @@ class Code128 extends BarcodeBase
 	 * Sub Type encoding
 	 * @var int (should be a class constant)
 	 */
-	private $type = self::TYPE_AUTO;
+	protected $type = self::TYPE_AUTO;
 
 	/*
 	 * This map maps the bar code to the common index. We use the built-in 

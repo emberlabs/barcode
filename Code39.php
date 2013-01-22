@@ -118,14 +118,22 @@ class Code39 extends BarcodeBase
 	 */
 	public function draw()
 	{
-		$this->img = @imagecreate($this->x, $this->y);
+	    // human readable text requires additional height added in order to see the text
+	    $extraHeight = ($this->humanText)?$this->fontSize+10:0;
+	    $this->img = @imagecreate($this->x, $this->y + $extraHeight);
+		//$this->img = @imagecreate($this->x, $this->y);
+		
+	    $FontHeight = ImageFontHeight ($this->fontSize);
+	    $FontWidth = ImageFontWidth ($this->fontSize);
+	    $BarcodeFull = strtoupper ($this->data);
+	    $CenterLoc = (int)(($this->x-1) / 2) - (int)(($FontWidth * strlen($BarcodeFull)) / 2);
 
 		if (!$this->img)
 		{
 			throw new \RuntimeException("Code39: Image failed to initialize");
 		}
 
-		//                Length of data  X   [ 6 narrow bars       +     3 wide bars      + A single Quiet stop ] - a single quiet stop
+		// Length of data  X   [ 6 narrow bars  + 3 wide bars + A single Quiet stop ] - a single quiet stop
 		$pxPerChar = (strlen($this->data) * ((6 * self::NARROW_BAR) + (3 * self::WIDE_BAR) + self::QUIET_BAR)) - self::QUIET_BAR;
 		$widthQuotient = $this->x / $pxPerChar;
 		
@@ -184,5 +192,14 @@ class Code39 extends BarcodeBase
 			imagefilledrectangle($this->img, $currentBarX, 0, ($currentBarX + $quietBar), ($this->y - 1), $white);
 			$currentBarX += $quietBar;
 		}
+		
+		if($this->humanText){
+	    ImageString ($this->img, $this->fontSize, $CenterLoc, $this->y, $BarcodeFull, $black);
+	    }
+	    
+	    return $this;
+		
 	}
+	
+	
 }
