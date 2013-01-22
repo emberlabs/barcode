@@ -7,7 +7,7 @@ barcode generation in PHP that was reasonable in price, much less Open Source.
 I hope to fill this gaping hole in the market today with Barcode Generator for
 PHP.
 
-I forked this project because we needed code128 barcodes.
+I forked this project because we needed code128 barcodes. I added text to the bottom of the barcodes (Human readable text)
 
 License
 -------
