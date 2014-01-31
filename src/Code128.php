@@ -257,7 +257,7 @@ class Code128 extends BarcodeBase
 
 		if ($pxPerBar < 1)
 		{
-			throw new LogicException("Not enough space on this barcode for this message, increase the width of the barcode");
+			throw new \LogicException("Not enough space on this barcode for this message, increase the width of the barcode");
 		}
 
 		if ($this->type == self::TYPE_C)
