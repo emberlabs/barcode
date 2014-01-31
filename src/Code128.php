@@ -252,6 +252,7 @@ class Code128 extends BarcodeBase
 		// Calc scaling
 		// Bars is in refrence to a single, 1-level bar
 		$numBarsRequired = ($this->type != self::TYPE_C) ? (sizeof($charAry) * 11) + 35 : ((sizeof($charAry)/2) * 11) + 35;
+		$this->x = ($this->x == 0) ? $numBarsRequired : $this->x;
 		$pxPerBar = (int) ($this->x / $numBarsRequired);
 		$currentX = ($this->x - ($numBarsRequired  * $pxPerBar)) / 2;
 
