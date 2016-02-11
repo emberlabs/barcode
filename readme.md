@@ -1,3 +1,9 @@
+# ~~ DEPRECATION NOTICE ~~
+
+**This package is no longer maintained and is being deprecated**
+
+Please try using something like picqer's [php barcode generator](https://github.com/picqer/php-barcode-generator) written in modern PHP and has been actively developed and maintained. It supports a lot more than this and can be installed with composer.
+
 Barcode Generator for PHP
 =========================
 
