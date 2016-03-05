@@ -48,6 +48,18 @@ abstract class BarcodeBase
 	 * @var int
 	 */
 	protected $jpgQuality = 85;
+	
+	/*
+	 * fontSize
+	 * @var int
+	 */
+	protected $fontSize = 5;
+	
+	/*
+	 * Type
+	 * @var String
+	 */
+	protected $type = "jpg";
 
 	/*
 	 * (Abstract) Set the data
@@ -64,6 +76,11 @@ abstract class BarcodeBase
 	 * @return void
 	 */
 	abstract public function draw();
+	
+	
+	public function setType($type){
+	    $this->type = $type;
+	}
 
 	/*
 	 * Set the Dimensions
@@ -103,6 +120,18 @@ abstract class BarcodeBase
 
 		return $this;
 	}
+	
+	/**
+	 * sets the font size for the human readable text below the barcode
+	 *
+	 * @param int $fontSize
+	 * @return \emberlabs\Barcode\BarcodeBase
+	 */
+	public function setFontSize($fontSize)
+	{
+	    $this->fontSize = $fontSize;
+	    return $this;
+	}
 
 	/*
 	 * Output Image to the buffer
@@ -127,6 +156,27 @@ abstract class BarcodeBase
 				imagepng($this->img);
 			break;
 		}
+	}
+	
+	function header(){
+	    switch($this->type)
+	    {
+	        case 'jpg':
+	            header('Content-Type: image/jpg');
+	            break;
+	    
+	        case 'gif':
+	            header('Content-Type: image/gif');
+	            break;
+	    
+	        case 'png':
+	            header('Content-Type: image/png');
+	            break;
+	    
+	        default:
+	            throw new \RuntimeException("Could not determine content type.");
+	            break;
+	    }
 	}
 
 	/*
@@ -161,6 +211,12 @@ abstract class BarcodeBase
 				throw new \RuntimeException("Could not determine file type.");
 			break;
 		}
+	}
+	
+	public function display($output = "jpg"){
+	    $this->header();
+	    $this->draw();
+	    $this->output($output);
 	}
 
 	/*
